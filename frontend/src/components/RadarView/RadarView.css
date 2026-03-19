@@ -1,0 +1,41 @@
+.radar-view {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+.radar-view__canvas {
+  display: block;
+  width: 500px;
+  height: 500px;
+  background: #0a0f1a;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: crosshair;
+}
+
+.radar-view__tooltip {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 180px;
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.96);
+  color: #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .radar-view,
+  .radar-view__canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}
