@@ -1,0 +1,15 @@
+bleak==0.21.1
+pybluez2==0.46
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+websockets==12.0
+sqlalchemy==2.0.30
+aiosqlite==0.20.0
+pydantic==2.7.1
+pydantic-settings==2.2.1
+pywin32==306
+requests==2.31.0
+pyinstaller==6.6.0
+alembic==1.13.1
+pytest==8.2.0
+pytest-asyncio==0.23.6
