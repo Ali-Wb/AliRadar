@@ -31,3 +31,12 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
+
+@media (max-width: 560px) {
+  .radar-view,
+  .radar-view__canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}

@@ -6,11 +6,13 @@ import "./RadarView.css";
 const CANVAS_SIZE = 500;
 const CENTER = CANVAS_SIZE / 2;
 const RING_DEFINITIONS = [
-  { label: "immediate", radius: 55 },
-  { label: "near", radius: 110 },
-  { label: "medium", radius: 165 },
-  { label: "far", radius: 220 },
+  { label: "immediate", radius: 55, start: 0, end: 1, minCanvasRadius: 30, maxCanvasRadius: 55 },
+  { label: "near", radius: 110, start: 1, end: 5, minCanvasRadius: 55, maxCanvasRadius: 110 },
+  { label: "medium", radius: 165, start: 5, end: 20, minCanvasRadius: 110, maxCanvasRadius: 165 },
+  { label: "far", radius: 220, start: 20, end: 100, minCanvasRadius: 165, maxCanvasRadius: 220 },
 ];
+const SWEEP_PERIOD_MS = 3000;
+const SWEEP_TRAIL_ARC = Math.PI / 3;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -21,30 +23,30 @@ function mapDistanceToRadius(distance, zone) {
     return 210;
   }
 
-  if (zone === "immediate") {
-    return 30 + ((clamp(distance, 0, 1) - 0) / 1) * 25;
+  const ring = RING_DEFINITIONS.find((entry) => entry.label === zone);
+  if (!ring) {
+    return 210;
   }
-  if (zone === "near") {
-    return 55 + ((clamp(distance, 1, 5) - 1) / 4) * 55;
-  }
-  if (zone === "medium") {
-    return 110 + ((clamp(distance, 5, 20) - 5) / 15) * 55;
-  }
-  if (zone === "far") {
-    return 165 + ((clamp(distance, 20, 100) - 20) / 80) * 55;
-  }
-  return 210;
+
+  const progress = (clamp(distance, ring.start, ring.end) - ring.start) / (ring.end - ring.start || 1);
+  return ring.minCanvasRadius + progress * (ring.maxCanvasRadius - ring.minCanvasRadius);
 }
 
-function getPulseStrength(lastSeen) {
+function getPulseProgress(lastSeen) {
   if (!lastSeen) {
     return null;
   }
+
   const elapsedMs = Date.now() - Date.parse(lastSeen);
   if (!Number.isFinite(elapsedMs) || elapsedMs < 0 || elapsedMs > 3000) {
     return null;
   }
-  return 1 - elapsedMs / 3000;
+
+  return elapsedMs / 3000;
+}
+
+function formatDistance(distance) {
+  return typeof distance === "number" ? `${distance.toFixed(1)} m` : "Unknown";
 }
 
 export default function RadarView({ devices = [], onDeviceSelect, selectedMac }) {
@@ -70,6 +72,7 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
           y,
           dotRadius: device.is_favorited ? 12 : 8,
           color: getDeviceClassColor(device.device_class),
+          pulseProgress: getPulseProgress(device.last_seen),
           pulseStrength,
         };
       }),
@@ -87,14 +90,18 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
     }
 
     const context = canvas.getContext("2d");
-    let mounted = true;
+    if (!context) {
+      return undefined;
+    }
 
-    const drawFrame = (timestamp) => {
-      if (!mounted) {
+    let isMounted = true;
+
+    const draw = (timestamp) => {
+      if (!isMounted) {
         return;
       }
 
-      const sweepAngle = ((timestamp % 3000) / 3000) * Math.PI * 2;
+      const sweepAngle = ((timestamp % SWEEP_PERIOD_MS) / SWEEP_PERIOD_MS) * Math.PI * 2;
       context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
       context.fillStyle = "#0a0f1a";
       context.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -102,7 +109,7 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
       context.save();
       context.translate(CENTER, CENTER);
 
-      RING_DEFINITIONS.forEach(({ label, radius }) => {
+      for (const { label, radius } of RING_DEFINITIONS) {
         context.beginPath();
         context.arc(0, 0, radius, 0, Math.PI * 2);
         context.fillStyle = "rgba(0,200,100,0.04)";
@@ -114,17 +121,19 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
         context.fillStyle = "rgba(0,255,120,0.55)";
         context.font = "12px system-ui";
         context.textAlign = "left";
-        context.fillText(label, radius + 8, 4);
-      });
+        context.textBaseline = "middle";
+        context.fillText(label, radius + 8, 0);
+      }
 
-      const gradient = context.createRadialGradient(0, 0, 0, 0, 0, 250);
-      gradient.addColorStop(0, "rgba(0,255,120,0.22)");
-      gradient.addColorStop(1, "rgba(0,255,120,0)");
+      const sweepGradient = context.createLinearGradient(0, 0, Math.cos(sweepAngle) * 235, Math.sin(sweepAngle) * 235);
+      sweepGradient.addColorStop(0, "rgba(0,255,120,0.22)");
+      sweepGradient.addColorStop(0.6, "rgba(0,255,120,0.08)");
+      sweepGradient.addColorStop(1, "rgba(0,255,120,0)");
       context.beginPath();
       context.moveTo(0, 0);
-      context.arc(0, 0, 235, sweepAngle - 0.6, sweepAngle, false);
+      context.arc(0, 0, 235, sweepAngle - SWEEP_TRAIL_ARC, sweepAngle, false);
       context.closePath();
-      context.fillStyle = gradient;
+      context.fillStyle = sweepGradient;
       context.fill();
 
       context.beginPath();
@@ -134,14 +143,14 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
       context.lineWidth = 3;
       context.stroke();
 
-      deviceLayout.forEach(({ device, x, y, dotRadius, color, pulseStrength }) => {
+      for (const { device, x, y, dotRadius, color, pulseProgress } of deviceLayout) {
         const localX = x - CENTER;
         const localY = y - CENTER;
 
-        if (pulseStrength) {
+        if (pulseProgress !== null) {
           context.beginPath();
-          context.arc(localX, localY, dotRadius + (1 - pulseStrength) * 14, 0, Math.PI * 2);
-          context.strokeStyle = `rgba(255,255,255,${pulseStrength * 0.45})`;
+          context.arc(localX, localY, dotRadius + pulseProgress * 16, 0, Math.PI * 2);
+          context.strokeStyle = `rgba(255,255,255,${0.5 * (1 - pulseProgress)})`;
           context.lineWidth = 2;
           context.stroke();
         }
@@ -154,6 +163,7 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
         context.fill();
         context.shadowBlur = 0;
 
+        if (selectedMac === device.mac) {
         if (selectedMac && selectedMac === device.mac) {
           context.beginPath();
           context.arc(localX, localY, dotRadius + 5, 0, Math.PI * 2);
@@ -177,15 +187,17 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
     };
   }, [deviceLayout, selectedMac]);
 
-  function getCanvasPoint(event) {
+  function getCanvasCoordinates(event) {
     const rect = canvasRef.current.getBoundingClientRect();
+    const scaleX = CANVAS_SIZE / rect.width;
+    const scaleY = CANVAS_SIZE / rect.height;
     return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
     };
   }
 
-  function findDeviceAtPoint(point) {
+  function findHitDevice(point) {
     return layoutRef.current.find(({ x, y }) => {
       const dx = point.x - x;
       const dy = point.y - y;
@@ -193,25 +205,24 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
     });
   }
 
-  function handleClick(event) {
-    const hit = findDeviceAtPoint(getCanvasPoint(event));
+  function handleCanvasClick(event) {
+    const hit = findHitDevice(getCanvasCoordinates(event));
     if (hit && onDeviceSelect) {
       onDeviceSelect(hit.device.mac);
     }
   }
 
-  function handleMouseMove(event) {
-    const point = getCanvasPoint(event);
-    const hit = findDeviceAtPoint(point);
+  function handleCanvasMouseMove(event) {
+    const hit = findHitDevice(getCanvasCoordinates(event));
     if (!hit) {
       setTooltip(null);
       return;
     }
 
     setTooltip({
+      device: hit.device,
       left: event.clientX + 12,
       top: event.clientY + 12,
-      device: hit.device,
     });
   }
 
@@ -220,18 +231,18 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
       <canvas
         ref={canvasRef}
         className="radar-view__canvas"
-        height={CANVAS_SIZE}
         width={CANVAS_SIZE}
-        onClick={handleClick}
+        height={CANVAS_SIZE}
+        onClick={handleCanvasClick}
         onMouseLeave={() => setTooltip(null)}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handleCanvasMouseMove}
       />
       {tooltip ? (
         <div className="radar-view__tooltip" style={{ left: tooltip.left, top: tooltip.top }}>
           <strong>{tooltip.device.user_label || tooltip.device.name || tooltip.device.mac}</strong>
-          <span>{tooltip.device.device_class || "unknown"}</span>
-          <span>Distance: {tooltip.device.last_distance_m ?? "?"} m</span>
-          <span>RSSI: {tooltip.device.last_rssi ?? "?"}</span>
+          <span>Class: {tooltip.device.device_class || "unknown"}</span>
+          <span>Distance: {formatDistance(tooltip.device.last_distance_m)}</span>
+          <span>RSSI: {tooltip.device.last_rssi ?? "Unknown"}</span>
         </div>
       ) : null}
     </div>
