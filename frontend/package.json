@@ -1,0 +1,21 @@
+{
+  "name": "aliradar",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.0",
+    "concurrently": "^8.2.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "concurrently \"vite\" \"electron .\"",
+    "electron:build": "vite build && electron-builder"
+  }
+}
