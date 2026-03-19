@@ -1,0 +1,81 @@
+.status-bar-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-bar__banner {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: #991b1b;
+  color: #fee2e2;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.status-bar-component {
+  height: 36px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 0.85rem;
+  background: #111827;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status-bar__wordmark {
+  font-weight: 700;
+}
+
+.status-bar__middle,
+.status-bar__right,
+.status-bar__pill,
+.status-bar__ws {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.status-bar__middle {
+  justify-content: center;
+}
+
+.status-bar__right {
+  justify-content: flex-end;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.status-bar__dot,
+.status-bar__ws-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ef4444;
+}
+
+.status-bar__dot--active,
+.status-bar__ws--live .status-bar__ws-dot {
+  background: #22c55e;
+}
+
+.status-bar__ws--live .status-bar__ws-dot {
+  animation: status-bar-pulse 1.4s ease-in-out infinite;
+}
+
+.status-bar__ws--offline .status-bar__ws-dot {
+  background: #ef4444;
+}
+
+@keyframes status-bar-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.45;
+  }
+}
