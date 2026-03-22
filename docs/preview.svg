@@ -1,0 +1,168 @@
+<svg width="1440" height="900" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="100%" stop-color="#09101A"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <style>
+      .title { font: 700 28px 'Segoe UI', Inter, Arial, sans-serif; fill: #E5E7EB; }
+      .text { font: 500 18px 'Segoe UI', Inter, Arial, sans-serif; fill: #E5E7EB; }
+      .muted { font: 500 16px 'Segoe UI', Inter, Arial, sans-serif; fill: #94A3B8; }
+      .small { font: 600 14px 'Segoe UI', Inter, Arial, sans-serif; fill: #BFDBFE; }
+      .label { font: 700 17px 'Segoe UI', Inter, Arial, sans-serif; fill: #E5E7EB; }
+      .tiny { font: 600 13px 'Segoe UI', Inter, Arial, sans-serif; fill: #CBD5E1; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <rect x="48" y="36" width="1344" height="828" rx="26" fill="#0A0F1A" stroke="#1F2937" filter="url(#shadow)"/>
+
+  <!-- Header -->
+  <rect x="48" y="36" width="1344" height="74" rx="26" fill="#111827"/>
+  <rect x="48" y="84" width="1344" height="1" fill="#1F2937"/>
+  <text x="86" y="81" class="title">AliRadar</text>
+  <rect x="216" y="55" width="112" height="34" rx="17" fill="#1F2937"/>
+  <circle cx="240" cy="72" r="6" fill="#22C55E"/>
+  <text x="255" y="78" class="small">Connected</text>
+
+  <g transform="translate(795 55)">
+    <rect x="0" y="0" width="96" height="34" rx="10" fill="#1F2937"/>
+    <text x="18" y="22" class="tiny">Devices: 14</text>
+    <rect x="110" y="0" width="88" height="34" rx="10" fill="#1F2937"/>
+    <text x="130" y="22" class="tiny">Active: 8</text>
+    <rect x="212" y="0" width="74" height="34" rx="10" fill="#1F2937"/>
+    <text x="232" y="22" class="tiny">BLE: 91</text>
+    <rect x="300" y="0" width="104" height="34" rx="10" fill="#1F2937"/>
+    <text x="320" y="22" class="tiny">Classic: 12</text>
+    <rect x="418" y="0" width="86" height="34" rx="10" fill="#1F2937"/>
+    <text x="441" y="22" class="tiny">Errors: 0</text>
+  </g>
+
+  <!-- Main panels -->
+  <rect x="70" y="132" width="724" height="468" rx="18" fill="url(#panel)" stroke="#1F2937"/>
+  <rect x="816" y="132" width="554" height="468" rx="18" fill="url(#panel)" stroke="#1F2937"/>
+
+  <text x="96" y="170" class="label">RadarView</text>
+  <text x="732" y="170" class="small">Live</text>
+  <text x="842" y="170" class="label">DeviceList</text>
+  <text x="1284" y="170" class="small">8 shown</text>
+
+  <!-- Radar area -->
+  <rect x="96" y="192" width="672" height="382" rx="18" fill="#09111D" stroke="#1F2937"/>
+  <circle cx="432" cy="383" r="150" stroke="#1E3A8A" stroke-opacity="0.45" stroke-width="2"/>
+  <circle cx="432" cy="383" r="108" stroke="#1D4ED8" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="432" cy="383" r="66" stroke="#3B82F6" stroke-opacity="0.38" stroke-width="2"/>
+  <circle cx="432" cy="383" r="24" fill="#0EA5E9" fill-opacity="0.20" stroke="#60A5FA" stroke-opacity="0.6"/>
+  <line x1="432" y1="201" x2="432" y2="565" stroke="#1F2937"/>
+  <line x1="250" y1="383" x2="614" y2="383" stroke="#1F2937"/>
+
+  <path d="M432 383 L556 300" stroke="#22C55E" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M432 383 L372 266" stroke="#38BDF8" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M432 383 L302 422" stroke="#F59E0B" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M432 383 L488 484" stroke="#A78BFA" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M432 383 L620 376" stroke="#EF4444" stroke-opacity="0.28" stroke-width="2"/>
+
+  <circle cx="556" cy="300" r="10" fill="#22C55E"/>
+  <circle cx="372" cy="266" r="8" fill="#38BDF8"/>
+  <circle cx="302" cy="422" r="9" fill="#F59E0B"/>
+  <circle cx="488" cy="484" r="8" fill="#A78BFA"/>
+  <circle cx="620" cy="376" r="7" fill="#EF4444"/>
+  <circle cx="432" cy="383" r="6" fill="#93C5FD"/>
+
+  <rect x="510" y="222" width="200" height="88" rx="12" fill="#111827" stroke="#334155"/>
+  <text x="528" y="247" class="tiny">iPhone 15 Pro</text>
+  <text x="528" y="270" class="muted">Apple • phone</text>
+  <text x="528" y="292" class="small">RSSI -52 • near</text>
+
+  <!-- Device list -->
+  <rect x="842" y="192" width="502" height="50" rx="12" fill="#0F172A" stroke="#374151"/>
+  <text x="864" y="223" class="muted">Search devices, filter by class, sort by signal…</text>
+
+  <g>
+    <rect x="842" y="260" width="502" height="72" rx="14" fill="#1F2937" stroke="#60A5FA"/>
+    <circle cx="870" cy="290" r="6" fill="#22C55E"/>
+    <text x="888" y="287" class="text">Mona's iPhone</text>
+    <text x="888" y="309" class="muted">Apple Inc. • AA:BB:CC:DD:EE:01</text>
+    <rect x="1226" y="273" width="74" height="24" rx="12" fill="#0F172A"/>
+    <text x="1242" y="289" class="small">near</text>
+    <text x="1220" y="313" class="small">phone</text>
+  </g>
+
+  <g>
+    <rect x="842" y="344" width="502" height="72" rx="14" fill="#1F2937"/>
+    <circle cx="870" cy="374" r="6" fill="#A78BFA"/>
+    <text x="888" y="371" class="text">AirPods Pro</text>
+    <text x="888" y="393" class="muted">Apple Inc. • AA:BB:CC:DD:EE:05</text>
+    <rect x="1226" y="357" width="92" height="24" rx="12" fill="#0F172A"/>
+    <text x="1242" y="373" class="small">immediate</text>
+    <text x="1220" y="397" class="small">headphones</text>
+  </g>
+
+  <g>
+    <rect x="842" y="428" width="502" height="72" rx="14" fill="#1F2937"/>
+    <circle cx="870" cy="458" r="6" fill="#F59E0B"/>
+    <text x="888" y="455" class="text">BMW 5 Series</text>
+    <text x="888" y="477" class="muted">Unknown manufacturer • AA:BB:CC:DD:EE:03</text>
+    <rect x="1226" y="441" width="68" height="24" rx="12" fill="#0F172A"/>
+    <text x="1244" y="457" class="small">far</text>
+    <text x="1228" y="481" class="small">classic</text>
+  </g>
+
+  <g>
+    <rect x="842" y="512" width="502" height="72" rx="14" fill="#1F2937"/>
+    <circle cx="870" cy="542" r="6" fill="#38BDF8"/>
+    <text x="888" y="539" class="text">Fenix 7</text>
+    <text x="888" y="561" class="muted">Garmin • AA:BB:CC:DD:EE:06</text>
+    <rect x="1226" y="525" width="74" height="24" rx="12" fill="#0F172A"/>
+    <text x="1242" y="541" class="small">medium</text>
+    <text x="1225" y="565" class="small">wearable</text>
+  </g>
+
+  <!-- Bottom tabs -->
+  <rect x="48" y="620" width="1344" height="62" fill="#111827"/>
+  <rect x="48" y="620" width="1344" height="1" fill="#1F2937"/>
+  <rect x="76" y="636" width="102" height="32" rx="10" fill="#1F2937" stroke="#374151"/>
+  <text x="103" y="657" class="tiny">Timeline</text>
+  <rect x="188" y="636" width="110" height="32" rx="10" fill="#2563EB"/>
+  <text x="224" y="657" class="tiny">Alerts</text>
+  <rect x="270" y="644" width="20" height="20" rx="10" fill="#1E3A8A"/>
+  <text x="277" y="658" class="tiny">3</text>
+  <rect x="1322" y="636" width="36" height="32" rx="10" fill="#1F2937" stroke="#374151"/>
+  <text x="1335" y="657" class="tiny">▼</text>
+
+  <!-- Bottom content -->
+  <rect x="70" y="698" width="1300" height="140" rx="18" fill="url(#panel)" stroke="#1F2937"/>
+  <g>
+    <rect x="96" y="722" width="388" height="92" rx="14" fill="#1F2937"/>
+    <circle cx="124" cy="755" r="8" fill="#EF4444"/>
+    <text x="144" y="750" class="text">Known device appeared</text>
+    <text x="144" y="774" class="muted">Mona's iPhone • 2 seconds ago</text>
+    <text x="144" y="797" class="small">AA:BB:CC:DD:EE:01 entered near zone</text>
+  </g>
+  <g>
+    <rect x="500" y="722" width="388" height="92" rx="14" fill="#1F2937"/>
+    <circle cx="528" cy="755" r="8" fill="#F59E0B"/>
+    <text x="548" y="750" class="text">Lingering device</text>
+    <text x="548" y="774" class="muted">AirPods Pro • 6 minutes nearby</text>
+    <text x="548" y="797" class="small">Alert rule: monitor accessories after 5m</text>
+  </g>
+  <g>
+    <rect x="904" y="722" width="438" height="92" rx="14" fill="#1F2937"/>
+    <circle cx="932" cy="755" r="8" fill="#38BDF8"/>
+    <text x="952" y="750" class="text">Scanner health</text>
+    <text x="952" y="774" class="muted">BLE active • Classic active • no recent errors</text>
+    <text x="952" y="797" class="small">Realtime stats and alerts stream into this panel</text>
+  </g>
+
+  <!-- Footer -->
+  <rect x="48" y="840" width="1344" height="24" rx="0" fill="#111827"/>
+  <text x="84" y="857" class="muted">Ready.</text>
+  <text x="1234" y="857" class="muted">Reconnect attempts: 0</text>
+</svg>
