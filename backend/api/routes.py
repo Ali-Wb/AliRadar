@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from typing import Any
 
@@ -26,6 +27,7 @@ router = APIRouter(prefix="/api/v1")
 _session_factory = None
 _scanner_manager = None
 HTML_TAG_RE = re.compile(r"<[^>]+>")
+VALID_SORT_FIELDS = {"last_seen", "name", "first_seen", "rssi", "distance"}
 
 
 class DeviceUpdatePayload(BaseModel):
@@ -59,6 +61,16 @@ def _ensure_configured() -> tuple[Any, Any]:
     return _session_factory, _scanner_manager
 
 
+def _deserialize_json_blob(value: str | None) -> dict | None:
+    if not value:
+        return None
+
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return None
+
+
 def _serialize_sighting(sighting: Sighting | None) -> dict | None:
     if sighting is None:
         return None
@@ -67,7 +79,7 @@ def _serialize_sighting(sighting: Sighting | None) -> dict | None:
         "timestamp": sighting.timestamp.isoformat() if sighting.timestamp else None,
         "rssi": sighting.rssi,
         "estimated_distance_m": sighting.estimated_distance_m,
-        "raw_advertisement": sighting.raw_advertisement,
+        "raw_advertisement": _deserialize_json_blob(sighting.raw_advertisement),
     }
 
 
@@ -110,6 +122,9 @@ async def list_devices(
 ):
     session_factory, _ = _ensure_configured()
     sanitized_class_filter = _sanitize_string(class_filter, 256)
+    sort_key = _sanitize_string(sort_by, 32) or "last_seen"
+    if sort_key not in VALID_SORT_FIELDS:
+        raise HTTPException(status_code=422, detail="Invalid sort field")
 
     async with session_factory() as session:
         devices = await get_active_devices(session, 10) if active_only else await get_all_devices(session)
@@ -136,10 +151,18 @@ async def list_devices(
                     row["last_zone"] = "distant"
             device_rows.append(row)
 
-        if sort_by == "last_seen":
+        if sort_key == "last_seen":
             device_rows.sort(key=lambda device: device["last_seen"] or "", reverse=True)
-        elif sort_by == "name":
+        elif sort_key == "first_seen":
+            device_rows.sort(key=lambda device: device["first_seen"] or "", reverse=True)
+        elif sort_key == "name":
             device_rows.sort(key=lambda device: device["name"] or "")
+        elif sort_key == "rssi":
+            device_rows.sort(key=lambda device: device["last_rssi"] if device["last_rssi"] is not None else -999, reverse=True)
+        elif sort_key == "distance":
+            device_rows.sort(
+                key=lambda device: device["last_distance_m"] if device["last_distance_m"] is not None else float("inf")
+            )
 
         active_count = len(await get_active_devices(session, 10))
         return {"devices": device_rows, "total": len(device_rows), "active_count": active_count}
@@ -208,6 +231,10 @@ async def post_alert_rule(payload: AlertCreatePayload):
     rule_type = _sanitize_string(payload.rule_type, 64)
     label = _sanitize_string(payload.label, 256)
     rule_value = _sanitize_string(payload.rule_value, 256)
+    if not rule_type:
+        raise HTTPException(status_code=422, detail="rule_type is required")
+    if not label:
+        raise HTTPException(status_code=422, detail="label is required")
 
     async with session_factory() as session:
         alert = await create_alert(
@@ -245,7 +272,7 @@ async def list_alert_events():
                     "alert_id": event.alert_id,
                     "device_id": event.device_id,
                     "triggered_at": event.triggered_at.isoformat() if event.triggered_at else None,
-                    "detail": event.detail,
+                    "detail": _deserialize_json_blob(event.detail),
                     "device": _serialize_device(devices[event.device_id]) if event.device_id in devices else None,
                 }
                 for event in events
