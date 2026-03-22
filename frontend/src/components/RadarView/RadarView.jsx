@@ -51,7 +51,7 @@ function formatDistance(distance) {
 
 export default function RadarView({ devices = [], onDeviceSelect, selectedMac }) {
   const canvasRef = useRef(null);
-  const animationFrameRef = useRef(null);
+  const frameRef = useRef(null);
   const layoutRef = useRef([]);
   const [tooltip, setTooltip] = useState(null);
 
@@ -62,14 +62,18 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
         const radius = mapDistanceToRadius(device.last_distance_m, device.last_zone);
         const x = CENTER + Math.cos(angle) * radius;
         const y = CENTER + Math.sin(angle) * radius;
+        const pulseStrength = getPulseStrength(device.last_seen);
 
         return {
           device,
+          angle,
+          radius,
           x,
           y,
           dotRadius: device.is_favorited ? 12 : 8,
           color: getDeviceClassColor(device.device_class),
           pulseProgress: getPulseProgress(device.last_seen),
+          pulseStrength,
         };
       }),
     [devices],
@@ -160,24 +164,25 @@ export default function RadarView({ devices = [], onDeviceSelect, selectedMac })
         context.shadowBlur = 0;
 
         if (selectedMac === device.mac) {
+        if (selectedMac && selectedMac === device.mac) {
           context.beginPath();
           context.arc(localX, localY, dotRadius + 5, 0, Math.PI * 2);
           context.strokeStyle = "#ffffff";
           context.lineWidth = 2;
           context.stroke();
         }
-      }
+      });
 
       context.restore();
-      animationFrameRef.current = window.requestAnimationFrame(draw);
+      frameRef.current = window.requestAnimationFrame(drawFrame);
     };
 
-    animationFrameRef.current = window.requestAnimationFrame(draw);
+    frameRef.current = window.requestAnimationFrame(drawFrame);
 
     return () => {
-      isMounted = false;
-      if (animationFrameRef.current) {
-        window.cancelAnimationFrame(animationFrameRef.current);
+      mounted = false;
+      if (frameRef.current) {
+        window.cancelAnimationFrame(frameRef.current);
       }
     };
   }, [deviceLayout, selectedMac]);
