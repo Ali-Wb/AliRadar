@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import ctypes
 import logging
 import os
@@ -9,7 +10,14 @@ from logging.handlers import RotatingFileHandler
 
 import uvicorn
 
+from backend.api.server import app, scanner_manager
 from backend.config import settings
+from backend.storage.database import async_engine
+
+
+async def _shutdown_runtime() -> None:
+    await scanner_manager.stop()
+    await async_engine.dispose()
 
 
 def ensure_admin() -> None:
@@ -50,6 +58,10 @@ def configure_logging() -> None:
 def install_signal_handlers() -> None:
     def _handle_signal(signum, _frame):
         logging.getLogger(__name__).info("Received signal %s, shutting down.", signum)
+        try:
+            asyncio.run(_shutdown_runtime())
+        finally:
+            raise SystemExit(0)
         raise SystemExit(0)
 
     signal.signal(signal.SIGINT, _handle_signal)

@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,6 +30,13 @@ app.add_middleware(
 app.include_router(router)
 
 
+def run_alembic_upgrade() -> None:
+    alembic_ini_path = Path(__file__).resolve().parents[1] / "alembic.ini"
+    config = Config(str(alembic_ini_path))
+    config.set_main_option("script_location", str(Path(__file__).resolve().parents[1] / "alembic"))
+    command.upgrade(config, "head")
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket) -> None:
     await websocket.accept()
@@ -39,6 +50,7 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 @app.on_event("startup")
 async def on_startup() -> None:
+    run_alembic_upgrade()
     await init_db()
     init_oui(settings.OUI_PATH)
     await scanner_manager.start()
