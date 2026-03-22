@@ -75,6 +75,9 @@ def classify_device(name, manufacturer, service_uuids, manufacturer_data, compan
     if _contains_any(device_name, ("MacBook", "iPhone", "iPad", "Galaxy", "Pixel", "OnePlus", "Xiaomi", "Redmi")):
         return "phone"
 
+    if _contains_any(device_name, ("AirPods", "WH-", "WF-", "Buds", "Headphone", "Earphone")):
+        return "headphones"
+
     if _contains_any(device_name, ("Laptop", "ThinkPad", "Surface", "Dell", "HP ")):
         return "laptop"
 
