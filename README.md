@@ -5,6 +5,13 @@ AliRadar is a Windows-first desktop Bluetooth radar that continuously scans for 
 
 The project is designed for a USB Bluetooth dongle connected to a Windows 10/11 machine. It discovers nearby devices such as phones, laptops, headphones, speakers, wearables, cars, and tags, then enriches those sightings with manufacturer, device class, estimated distance, live updates, and alert events.
 
+## Preview
+
+> This is a simulated preview based on the current React/Electron layout and styles in the repository, not an actual runtime screenshot.
+
+![Simulated AliRadar desktop preview](docs/preview.svg)
+
+
 ## What the project includes
 
 - **Bluetooth scanning pipeline** for BLE and Classic Bluetooth discovery, normalization, deduplication, enrichment, presence tracking, and alert evaluation.
