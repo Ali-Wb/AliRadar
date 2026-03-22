@@ -60,6 +60,9 @@ def classify_device(name, manufacturer, service_uuids, manufacturer_data, compan
     if "FE2C" in normalized_uuids or "181A" in normalized_uuids:
         return "tag"
 
+    if _contains_any(device_name, ("AirPods", "WH-", "WF-", "Buds", "Headphone", "Earphone")):
+        return "headphones"
+
     if company_id == 0x004C:
         return "phone"
 
