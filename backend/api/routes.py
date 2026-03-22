@@ -52,8 +52,7 @@ def _sanitize_string(value: str | None, max_length: int) -> str | None:
     if value is None:
         return None
     cleaned = HTML_TAG_RE.sub("", value).strip()
-    cleaned = cleaned[:max_length]
-    return cleaned or None
+    return cleaned[:max_length]
 
 
 def _ensure_configured() -> tuple[Any, Any]:

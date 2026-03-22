@@ -62,6 +62,7 @@ def install_signal_handlers() -> None:
             asyncio.run(_shutdown_runtime())
         finally:
             raise SystemExit(0)
+        raise SystemExit(0)
 
     signal.signal(signal.SIGINT, _handle_signal)
     signal.signal(signal.SIGTERM, _handle_signal)
@@ -71,7 +72,7 @@ def main() -> None:
     ensure_admin()
     configure_logging()
     install_signal_handlers()
-    uvicorn.run(app, host=settings.HOST, port=settings.PORT, log_level="info")
+    uvicorn.run("backend.api.server:app", host=settings.HOST, port=settings.PORT, log_level="info")
 
 
 if __name__ == "__main__":

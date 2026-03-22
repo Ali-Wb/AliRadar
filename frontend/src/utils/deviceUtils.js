@@ -69,10 +69,10 @@ export function macToAngle(mac) {
 
   let hash = 0;
   for (let index = 0; index < normalized.length; index += 1) {
-    hash = (hash + normalized.charCodeAt(index) * 31) % 360;
+    hash = (hash * 31 + normalized.charCodeAt(index)) % 3600;
   }
 
-  return (hash / 360) * Math.PI * 2;
+  return (hash / 3600) * Math.PI * 2;
 }
 
 export function getDeviceClassColor(deviceClass) {
