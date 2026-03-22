@@ -1,0 +1,93 @@
+.alerts-panel-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.alerts-panel-view__tabs,
+.alerts-panel-view__toolbar,
+.alert-rule-card,
+.alert-event-card,
+.alert-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.alerts-tab,
+.alerts-panel-view button,
+.alert-form input,
+.alert-form select {
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.alerts-tab--active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.alerts-panel-view__events,
+.alerts-rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: auto;
+}
+
+.alert-event-card,
+.alert-rule-card,
+.alert-form,
+.alerts-empty {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.alert-event-card__icon {
+  width: 12px;
+  height: 12px;
+  margin-top: 0.35rem;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.alert-event-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.alert-event-card__content p,
+.alert-rule-card strong {
+  margin: 0;
+}
+
+.alert-rule-card,
+.alerts-panel-view__rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alert-rule-card__badge {
+  display: inline-flex;
+  margin-right: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.alert-form {
+  flex-direction: column;
+}
+
+.alert-form__slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
